@@ -92,8 +92,9 @@ app.post('/blogs',verifyToken, async (req, res) => {
     timestamp = new Date();
   }
   try {
-    const query = 'INSERT INTO blogs (title, content, author, timestamp) VALUES ($1, $2, $3, $4) RETURNING *';
+    const query = 'INSERT INTO blogs (title, content, author, timestamp) VALUES ($1, $2, $3, COALESCE($4, CURRENT_TIMESTAMP)) RETURNING *';
     const result = await pool.query(query, [title, content, author, timestamp]);
+    
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Error creating blog post:', error.message);
