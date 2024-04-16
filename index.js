@@ -87,13 +87,11 @@ pool.query(createTableQuery)
 
 // Create a blog post
 app.post('/blogs',verifyToken, async (req, res) => {
-  const { title, content, author, timestamp } = req.body;
-  if(!timestamp){
-    timestamp = new Date();
-  }
+  const { title, content, author } = req.body;
+ 
   try {
-    const query = 'INSERT INTO blogs (title, content, author, timestamp) VALUES ($1, $2, $3, COALESCE($4, CURRENT_TIMESTAMP)) RETURNING *';
-    const result = await pool.query(query, [title, content, author, timestamp]);
+    const query = 'INSERT INTO blogs (title, content, author) VALUES ($1, $2, $3) RETURNING *';
+    const result = await pool.query(query, [title, content, author]);
     
     res.status(201).json(result.rows[0]);
   } catch (error) {
