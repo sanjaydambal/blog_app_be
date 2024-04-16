@@ -112,12 +112,14 @@ app.get('/blogs',verifyToken, async (req, res) => {
 });
 
 // Update a blog post
+// Update a blog post
 app.put('/blogs/:id', async (req, res) => {
   const { id } = req.params;
-  const { title, content, author, timestamp } = req.body;
+  const { title, content, author } = req.body; // Remove timestamp from here
+  
   try {
-    const query = 'UPDATE blogs SET title = $1, content = $2, author = $3, timestamp = $4 WHERE id = $5 RETURNING *';
-    const result = await pool.query(query, [title, content, author, timestamp, id]);
+    const query = 'UPDATE blogs SET title = $1, content = $2, author = $3, timestamp = CURRENT_TIMESTAMP WHERE id = $4 RETURNING *'; // Update the query
+    const result = await pool.query(query, [title, content, author, id]); // Pass id as parameter
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Blog post not found' });
     }
@@ -127,6 +129,7 @@ app.put('/blogs/:id', async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+
 
 // Delete a blog post
 app.delete('/blogs/:id', async (req, res) => {
