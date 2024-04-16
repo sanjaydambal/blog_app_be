@@ -88,6 +88,9 @@ pool.query(createTableQuery)
 // Create a blog post
 app.post('/blogs',verifyToken, async (req, res) => {
   const { title, content, author, timestamp } = req.body;
+  if(!timestamp){
+    timestamp = new Date();
+  }
   try {
     const query = 'INSERT INTO blogs (title, content, author, timestamp) VALUES ($1, $2, $3, $4) RETURNING *';
     const result = await pool.query(query, [title, content, author, timestamp]);
