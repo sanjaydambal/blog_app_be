@@ -86,7 +86,7 @@ pool.query(createTableQuery)
   .catch(err => console.error('Error creating table:', err.message));
 
 // Create a blog post
-app.post('/blogs', async (req, res) => {
+app.post('/blogs',verifyToken, async (req, res) => {
   const { title, content, author, timestamp } = req.body;
   try {
     const query = 'INSERT INTO blogs (title, content, author, timestamp) VALUES ($1, $2, $3, $4) RETURNING *';
@@ -99,7 +99,7 @@ app.post('/blogs', async (req, res) => {
 });
 
 // Get all blog posts
-app.get('/blogs', async (req, res) => {
+app.get('/blogs',verifyToken, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM blogs ORDER BY timestamp DESC');
     res.status(200).json(result.rows);
